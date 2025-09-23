@@ -57,8 +57,8 @@ def train(args, molecule_model_3D, device, loader, optimizer):
 
         optimizer.zero_grad()
 
-        # 1. 计算 anchor/positive 的 embedding
-        anchor_tensor = molecule_model_3D(anchors_batch.x, anchors_batch.edge_index, anchors_batch.edge_attr)  # [B*N_atom, D] -> [B, D] 通过 readout
+        # 1. Calculate the embedding of anchorpositive
+        anchor_tensor = molecule_model_3D(anchors_batch.x, anchors_batch.edge_index, anchors_batch.edge_attr)  # [B*N_atom, D] -> [B, D] Through readout
         anchor_tensor = global_mean_pool(anchor_tensor, anchors_batch.batch)   # [B, D]
         # print(len(anchor_tensor), len(anchor_tensor[0]))
         positive_tensor = molecule_model_3D(positives_batch.x, positives_batch.edge_index, positives_batch.edge_attr)
@@ -71,7 +71,7 @@ def train(args, molecule_model_3D, device, loader, optimizer):
 
         negative_tensor = negative_tensor_flat.view(len(anchors), number_neg, -1)  # [B, number_neg, D]
 
-        # 计算对比损失
+        # Calculate the contrastive loss
         # --- INFO NCE ---
         pos_sim = F.cosine_similarity(anchor_tensor, positive_tensor, dim=-1)
         anchor_expand = anchor_tensor.unsqueeze(1)  # [B, 1, D]
@@ -84,22 +84,22 @@ def train(args, molecule_model_3D, device, loader, optimizer):
 
         # ===== NT-Xent Loss (SimCLR) =====
         # z = torch.cat([anchor_tensor, positive_tensor], dim=0)  # [2B, D]
-        # z = F.normalize(z, dim=-1)  # 单位化
+        # z = F.normalize(z, dim=-1)  # Unit
 
-        # # 相似度矩阵 [2B, 2B]
+        # # Similarity matrix [2B, 2B]
         # sim = torch.matmul(z, z.T) / args.T
 
-        # # 去掉对角线 (自己和自己)
+        # # Remove the diagonals (oneself and oneself)
         # mask = torch.eye(sim.size(0), device=sim.device).bool()
         # sim.masked_fill_(mask, -1e9)
 
-        # # 构造 label：正样本在 batch 中的 index
-        # # 例如 anchor[i] 的正样本是 positive[i]
+        # # Construct the label: index of the positive sample in the batch
+        # # For example, the positive sample of anchor[i] is positive[i]
         # B = anchor_tensor.size(0)
         # labels = torch.arange(B, device=sim.device)
         # labels = torch.cat([labels + B, labels], dim=0)  # [2B]
 
-        # # 交叉熵 loss
+        # # Cross-entropy loss
         # loss = F.cross_entropy(sim, labels)
 
         # --- NCE Loss ---
@@ -107,27 +107,27 @@ def train(args, molecule_model_3D, device, loader, optimizer):
         # positive_tensor: [B, D]
         # negative_tensor: [B, N, D]
 
-        # L2 归一化 (可选，提高数值稳定性)
+        # L2 normalization (optional, enhancing numerical stability)
         # anchor_norm = F.normalize(anchor_tensor, dim=-1)
         # positive_norm = F.normalize(positive_tensor, dim=-1)
         # negative_norm = F.normalize(negative_tensor, dim=-1)
 
-        # # 计算正样本相似度
+        # Calculate the similarity of positive samples
         # pos_sim = torch.sum(anchor_norm * positive_norm, dim=-1)  # [B]
 
-        # # 计算负样本相似度
+        # Calculate the negative sample similarity
         # anchor_expand = anchor_norm.unsqueeze(1)                 # [B, 1, D]
         # neg_sim = torch.sum(anchor_expand * negative_norm, dim=-1)  # [B, N]
 
-        # # sigmoid 作为二分类概率
+        # sigmoid as a binary classification probability
         # pos_loss = -torch.log(torch.sigmoid(pos_sim))            # [B]
         # neg_loss = -torch.sum(torch.log(1 - torch.sigmoid(neg_sim)), dim=-1)  # [B]
 
-        # # NCE 总 loss
+        # NCE损失
         # loss = (pos_loss + neg_loss).mean()
 
 
-        loss = loss.mean()  # 平均损失
+        loss = loss.mean()  # Average loss
         total_loss += loss.item()
         num_batches += 1
 
@@ -140,7 +140,7 @@ def train(args, molecule_model_3D, device, loader, optimizer):
     avg_loss = total_loss / num_batches if num_batches > 0 else float('inf')
     if avg_loss < best_loss:
         best_loss = avg_loss
-        # 这里可以保存模型或记录最优损失等
+        # Here, you can save the model or record the optimal loss, etc
         torch.save(molecule_model_3D.state_dict(), 'ablation_model/GraphGPT_best_model.pth')
     logging.info('Training loss: {:.4f},  Training time: {:.2f}s'.format(avg_loss, time.time() - start_time))
 

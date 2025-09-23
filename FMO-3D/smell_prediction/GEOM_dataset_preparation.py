@@ -374,5 +374,5 @@ if __name__ == '__main__':
 
     ##### for data pre-processing #####
     '''
-    python GEOM_dataset_preparation.py --n_mol 100 --n_conf 5 --n_upper 1000 --data_folder /home/local/ASURITE/wying4/code/GraphMVP/datasets
+    python GEOM_dataset_preparation.py --n_mol 100 --n_conf 5 --n_upper 1000 --data_folder datasets/fmo_3d
     '''

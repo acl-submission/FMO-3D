@@ -30,13 +30,13 @@ label_name = "label_name"
 # label_name = "third_class"
 
 # train
-train_data = pd.read_hdf('train_embedding_with_label.h5', key='df')
+train_data = pd.read_hdf('datasets/generated_embedding/train_embedding_with_label.h5', key='df')
 train_X = train_data.iloc[:, 0:300].values
 train_data[label_name] = train_data[label_name].apply(replace_unknown_to_UNK)
 train_y = train_data[label_name].values
 
 # test
-test_data = pd.read_hdf('test_embedding_with_label.h5', key='df')
+test_data = pd.read_hdf('datasets/generated_embedding/test_embedding_with_label.h5', key='df')
 test_X = test_data.iloc[:, 0:300].values
 test_data[label_name] = test_data[label_name].apply(replace_unknown_to_UNK)
 test_y = test_data[label_name].values

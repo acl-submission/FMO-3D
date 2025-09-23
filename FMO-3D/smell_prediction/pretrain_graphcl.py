@@ -89,17 +89,17 @@ def train(args, molecule_model_3D, device, loader, optimizer):
         # # Similarity matrix [2B, 2B]
         # sim = torch.matmul(z, z.T) / args.T
 
-        # # 去掉对角线 (自己和自己)
+        # # Remove the diagonals (oneself and oneself)
         # mask = torch.eye(sim.size(0), device=sim.device).bool()
         # sim.masked_fill_(mask, -1e9)
 
-        # # 构造 label：正样本在 batch 中的 index
-        # # 例如 anchor[i] 的正样本是 positive[i]
+        # # Construct the label: index of the positive sample in the batch
+        # # For example, the positive sample of anchor[i] is positive[i]
         # B = anchor_tensor.size(0)
         # labels = torch.arange(B, device=sim.device)
         # labels = torch.cat([labels + B, labels], dim=0)  # [2B]
 
-        # # 交叉熵 loss
+        # # Cross-entropy loss
         # loss = F.cross_entropy(sim, labels)
 
         # --- NCE Loss ---
@@ -107,23 +107,23 @@ def train(args, molecule_model_3D, device, loader, optimizer):
         # positive_tensor: [B, D]
         # negative_tensor: [B, N, D]
 
-        # L2 归一化 (可选，提高数值稳定性)
+        # L2 normalization (optional, enhancing numerical stability)
         # anchor_norm = F.normalize(anchor_tensor, dim=-1)
         # positive_norm = F.normalize(positive_tensor, dim=-1)
         # negative_norm = F.normalize(negative_tensor, dim=-1)
 
-        # # 计算正样本相似度
+        # # Calculate the similarity of positive samples
         # pos_sim = torch.sum(anchor_norm * positive_norm, dim=-1)  # [B]
 
-        # # 计算负样本相似度
+        # # Calculate the negative sample similarity
         # anchor_expand = anchor_norm.unsqueeze(1)                 # [B, 1, D]
         # neg_sim = torch.sum(anchor_expand * negative_norm, dim=-1)  # [B, N]
 
-        # # sigmoid 作为二分类概率
+        # # sigmoid as a binary classification probability
         # pos_loss = -torch.log(torch.sigmoid(pos_sim))            # [B]
         # neg_loss = -torch.sum(torch.log(1 - torch.sigmoid(neg_sim)), dim=-1)  # [B]
 
-        # # NCE 总 loss
+        # # NCE all loss
         # loss = (pos_loss + neg_loss).mean()
 
 

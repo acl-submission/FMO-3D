@@ -7,7 +7,7 @@ import umap
 from collections import Counter
 from typing import Dict
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D  # 导入 3D 绘图工具
+from mpl_toolkits.mplot3d import Axes3D  
 
 # ---------- Tools ----------
 def replace_unknown_to_UNK(label_list):
@@ -24,14 +24,14 @@ anchor_name = "anchor_name"
 label_name = "label_name"
 secondary_name = "second_class"
 
-# train_data = pd.read_hdf('/home/cc/Desktop/FMO-3D-main/datasets/generated_embedding/train_embedding_with_label.h5', key='df')
+# train_data = pd.read_hdf('datasets/generated_embedding/train_embedding_with_label.h5', key='df')
 # train_X = train_data.iloc[:, 0:300].values
 # train_data[anchor_name] = train_data[anchor_name].apply(replace_unknown_to_UNK)
-# train_y = train_data[anchor_name].apply(replace_unknown_to_UNK).values  # 保持为标签列表数组
+# train_y = train_data[anchor_name].apply(replace_unknown_to_UNK).values 
 # train_y_first = train_data[label_name].values
 # train_y_second = train_data[secondary_name].values
 
-test_data = pd.read_hdf('/home/cc/Desktop/embedding/openpom/unimol/secondary_test_embeddings_with_name.h5', key='df')
+test_data = pd.read_hdf('datasets/generated_embedding/test_embedding_with_label.h5', key='df')
 # test_X = test_data.iloc[:, 0:300].values
 
 embedding_cols = [c for c in test_data.columns if c.startswith("emb_")]
