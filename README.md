@@ -16,7 +16,9 @@ Olfaction is one of the least understood human senses, driven by subtle 3D molec
 
 ## 3D Conformer Odor Embedding Space Visualization
 
-📌 *Insert three visualization figures here*
+![Level 1 Visualization](resource/label1.png)
+![Level 2 Visualization](resource/label2.png)
+![Level 3 Visualization](resource/label3.png)
 
 ---
 
