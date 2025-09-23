@@ -54,7 +54,7 @@ class SingleMoleculePredictor(torch.nn.Module):
         emb = self.gcn(x, edge_index, edge_attr, batch_index)
         return self.out(emb)
 
-# 自定义 collate_fn，与训练时一致
+
 def collate_fn(batch):
     y = torch.stack([data.y for data in batch], dim=0)
     for data in batch:
@@ -102,11 +102,7 @@ with torch.no_grad():
         all_preds.append(pred.cpu())
 all_preds = torch.cat(all_preds, dim=0)  # shape [num_samples, 9]
 
-# # 加载原始测试 CSV，仅保留 nonStereoSMILES
-# test_csv = pd.read_csv("single/openpom_test_dataset_primary.csv")[['nonStereoSMILES']]
-# # 从 label.txt 读取标签
-# with open("single_third/labels.txt", "r", encoding="utf-8") as f:
-#     label_columns = [line.strip() for line in f if line.strip()]
+
 
 # Load the original test CSV, including SMILES and true label
 test_csv = pd.read_csv("single/openpom_test_dataset_secondary.csv")

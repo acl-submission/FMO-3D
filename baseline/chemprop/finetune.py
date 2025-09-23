@@ -14,7 +14,7 @@ from sklearn.model_selection import KFold
 
 from rdkit import Chem
 
-# ========== 随机种子 ==========
+
 SEED = 42
 torch.manual_seed(SEED)
 np.random.seed(SEED)

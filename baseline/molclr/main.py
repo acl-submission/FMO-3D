@@ -15,7 +15,7 @@ def load_model(model_path, config_path):
 
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
-    config['dataset']['task'] = 'classification'  # 明确指定任务为分类
+    config['dataset']['task'] = 'classification' 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model = GINet(config['dataset']['task'], **config['model']).to(device)
@@ -32,23 +32,23 @@ def predict_aroma_probabilities(root_path, smiles_list, target_list):
 
     for target in tqdm(target_list, desc=f"Models Predict"):
         print("Predicting", target)
-        # 加载预测animal aroma的模型
+        # Load the model for predicting animal aroma
         model_path = f"{root_path}/{target}/checkpoints/model.pth"
         config_path = f"{root_path}/{target}/checkpoints/config_finetune.yaml"
 
         if not os.path.exists(model_path):
-            print(f"{target}数据单一导致未训练！")
+            print(f"{target}The single data leads to no training！")
             del all_probabilities[target]
             continue
 
         model, device = load_model(model_path, config_path)
 
-        # 预测
+        # predict
         for smiles_string in smiles_list:
             transform = SmilesToGraph()
             data = transform(smiles_string)
             if data is None:
-                print(f"SMILES 字符串无效: {smiles_string}")
+                print(f"SMILES The string is invalid: {smiles_string}")
                 return None
 
             data_on_device = data.to(device)
@@ -78,15 +78,15 @@ def main():
     target_list = list(df.columns)[2:]
 
     result = predict_aroma_probabilities(model_root_path, smiles_list, target_list)
-    # 处理表头
+    # Handle the table header
     result=pd.DataFrame(result)
     result.columns = ["nonStereoSMILES"] + [i+"_probability" for i in result.columns[1:]]
-    # 添加01列结果
+    # Add the results of column 01
     for column in result.columns[1:]:
         new_column = column.split("_")[0] + "_prediction"
-        # 使用列表推导式简化代码
+        # Simplify the code using list inference
         result[new_column] = [1 if i >= 0.5 else 0 for i in result[column]]
-    # 保存
+    # Save
     result.to_csv(save_path, index=False)
 
 if __name__ == '__main__':

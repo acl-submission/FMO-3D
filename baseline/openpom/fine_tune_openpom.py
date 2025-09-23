@@ -19,7 +19,7 @@ os.environ['PYTORCH_DISABLE_WARNINGS'] = '1'
 with open('datasets/fmo3d_datasets/aroma_vocabularies.json', 'r') as f:
     vocab_data = json.load(f)
 
-# levels = ['primary', 'secondary', 'third']  # 三个级别
+# levels = ['primary', 'secondary', 'third']  
 levels = ['third']
 data_root = 'datasets/fmo3d_datasets'
 results_root = 'fmo3d_results'
