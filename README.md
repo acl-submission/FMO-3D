@@ -128,8 +128,13 @@ python GEOM_dataset_preparation.py --data_folder datasets/fmo_3d
   ```
 * Ablation studies:
 
-  * `pretrain_GraphGPT.py`
-  * `pretrain_graphcl.py`
+  ```bash
+  python smell_prediction/pretrain_GraphGPT.py
+  ```
+  ```bash
+  python smell_prediction/pretrain_graphcl.py
+  ```
+
 
 ---
 
